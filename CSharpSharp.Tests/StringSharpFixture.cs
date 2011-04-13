@@ -135,6 +135,7 @@ namespace CSharpSharp.Tests
         [Row("thing", "things")]
         [Row("things", "things")]
         [Row("theThing", "theThings")]
+        [Row("octopus", "octopuses")] // not "octopi": http://en.wikipedia.org/wiki/Plural_form_of_words_ending_in_-us#Octopus
         public void PlurarizationTest(string stringToPluralize, string expectedString)
         {
             Assert.AreEqual(expectedString, stringToPluralize.Pluralize());
