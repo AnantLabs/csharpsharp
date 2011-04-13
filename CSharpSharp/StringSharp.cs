@@ -237,6 +237,59 @@ namespace CSharpSharp
         #region Conversion methods
 
         /// <summary>
+        /// Fluent interface for <c>int.Parse(value)</c>.
+        /// </summary>
+        /// <param name="value">The value.</param>
+        /// <returns>The integer representation of the value.</returns>
+        public static int ToInt(this string value)
+        {
+            return int.Parse(value);
+        }
+
+        /// <summary>
+        /// Fluent interface for <c>long.Parse(value)</c>.
+        /// </summary>
+        /// <param name="value">The value.</param>
+        /// <returns>The longeger representation of the value.</returns>
+        public static long ToLong(this string value)
+        {
+            return long.Parse(value);
+        }
+
+        /// <summary>
+        /// Fluent interface for <c>BooleanSharp.Parse(value)</c>.
+        /// </summary>
+        /// <param name="value">The value to convert.</param>
+        /// <exception cref="System.FormatException">The value is not an accepted string.</exception>
+        /// <returns>true if value is accepted true string; otherwise, false.</returns>
+        public static bool ToBool(this string value)
+        {
+            return value.ToBool(false);
+        }
+
+        /// <summary>
+        /// Converts the value using either <c>BooleanSharp.Parse(value)</c> or
+        /// <c>bool.Parse(value)</c> depending on the value of <c>useStandardBooleanParser</c>.
+        /// </summary>
+        /// <param name="value">The value to convert.</param>
+        /// <param name="useStandardBooleanParser">if set to <c>true</c> use the standard boolean parser (<c>bool.Parse(value)</c>).</param>
+        /// <returns>
+        /// true if value is an accepted true string; otherwise, false.
+        /// </returns>
+        /// <exception cref="System.FormatException">The value is not an accepted string.</exception>
+        public static bool ToBool(this string value, bool useStandardBooleanParser)
+        {
+            if (useStandardBooleanParser)
+            {
+                return bool.Parse(value);
+            }
+            else
+            {
+                return BooleanSharp.Parse(value);
+            }
+        }
+
+        /// <summary>
         /// Converts the string representation of the name or numeric value of one or
         /// more enumerated constants to an equivalent enumerated object.
         /// </summary>
