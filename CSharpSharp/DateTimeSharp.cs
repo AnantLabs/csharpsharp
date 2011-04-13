@@ -105,9 +105,29 @@ namespace CSharpSharp
         /// <returns>A time span with the specified number of monts.</returns>
         public static TimeSpan Months(this int value)
         {
+            return value.Months(false);
+        }
+
+        /// <summary>
+        /// Returns a time span with the specified number of months.
+        /// The average number of days in a month is used, if you want
+        /// to assume 30 days per month, call the other method.
+        /// </summary>
+        /// <param name="value">The value.</param>
+        /// <param name="assume30DaysPerMonth">
+        /// Flag indicating whether to assume that a month has 30 days or to use the
+        /// average number of days per month to calculate the time span.
+        /// </param>
+        /// <returns>
+        /// A time span with the specified number of monts.
+        /// </returns>
+        public static TimeSpan Months(this int value, bool assume30DaysPerMonth)
+        {
             try
             {
-                return new TimeSpan((int)Math.Round(value * DaysInAMonth), 0, 0, 0);
+                decimal daysPerMonth = assume30DaysPerMonth ? 30 : DaysInAMonth;
+
+                return new TimeSpan((int)Math.Round(value * daysPerMonth), 0, 0, 0);
             }
             catch (OverflowException ex)
             {
@@ -118,14 +138,36 @@ namespace CSharpSharp
 
         /// <summary>
         /// Returns a time span with the specified number of years.
+        /// The average number of days in a year is used, if you want
+        /// to assume 365 days per year, call the other method.
         /// </summary>
         /// <param name="value">The value.</param>
-        /// <returns>A time span with the specified number of years.</returns>
+        /// <returns>
+        /// A time span with the specified number of years.
+        /// </returns>
         public static TimeSpan Years(this int value)
-        {            
+        {
+            return value.Years(false);
+        }
+
+        /// <summary>
+        /// Returns a time span with the specified number of years.
+        /// </summary>
+        /// <param name="value">The value.</param>
+        /// <param name="assume365DaysPerYear">
+        /// Flag indicating whether to assume that a year has 365 days or to use the
+        /// average number of days per year to calculate the time span.
+        /// </param>
+        /// <returns>
+        /// A time span with the specified number of years.
+        /// </returns>
+        public static TimeSpan Years(this int value, bool assume365DaysPerYear)
+        {
             try
             {
-                return new TimeSpan((int)Math.Round(value * DaysInAYear), 0, 0, 0);
+                decimal daysPerYear = assume365DaysPerYear ? 365 : DaysInAYear;
+
+                return new TimeSpan((int)Math.Round(value * daysPerYear), 0, 0, 0);
             }
             catch (OverflowException ex)
             {

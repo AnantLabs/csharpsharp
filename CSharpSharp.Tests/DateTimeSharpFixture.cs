@@ -105,6 +105,24 @@ namespace CSharpSharp.Tests
         }
 
         /// <summary>
+        /// Validates that the integer.Months(true) shorthand returns a TimeSpan
+        /// of the number of months specified by the integer.
+        /// </summary>
+        [Test]
+        public void MonthsShorthandAssumption()
+        {
+            TimeSpan sixtyMonthsWithAssumption = 60.Months(true);
+            TimeSpan sixtyMonthsWithoutAssumption = 60.Months();
+
+            // Make sure they are not the same
+            Assert.AreNotEqual(sixtyMonthsWithAssumption, sixtyMonthsWithoutAssumption);
+
+            // Compare with a manually calculated number of days
+            TimeSpan sixtyMonthsOf30Days = new TimeSpan(60 * 30, 0, 0, 0);
+            Assert.AreEqual(sixtyMonthsWithAssumption, sixtyMonthsOf30Days);
+        }
+
+        /// <summary>
         /// Validates that the integer.Years() shorthand returns a TimeSpan
         /// of the number of years specified by the integer.
         /// </summary>
@@ -116,6 +134,24 @@ namespace CSharpSharp.Tests
             int numberOfDays = (int)(5 * DateTimeSharp.DaysInAYear);
 
             Assert.AreEqual(new TimeSpan(numberOfDays, 0, 0, 0), fiveYears);
+        }
+
+        /// <summary>
+        /// Validates that the integer.Years(true) shorthand returns a TimeSpan
+        /// of the number of months specified by the integer.
+        /// </summary>
+        [Test]
+        public void YearsShorthandAssumption()
+        {
+            TimeSpan tenYearsWithAssumption = 10.Years(true);
+            TimeSpan tenYearsWithoutAssumption = 10.Years();
+
+            // Make sure they are not the same
+            Assert.AreNotEqual(tenYearsWithAssumption, tenYearsWithoutAssumption);
+
+            // Compare with a manually calculated number of days
+            TimeSpan tenYearsOf365Days = new TimeSpan(10 * 365, 0, 0, 0);
+            Assert.AreEqual(tenYearsWithAssumption, tenYearsOf365Days);
         }
 
         /// <summary>
