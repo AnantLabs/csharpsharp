@@ -51,6 +51,7 @@
     <Compile Include="BooleanSharpFixture.cs" />
     <Compile Include="CollectionComparerFixture.cs" />
     <Compile Include="BooleanParserFixture.cs" />
+    <Compile Include="IntegerSharpFixture.cs" />
     <Compile Include="StringSharpFixture.cs" />
     <Compile Include="DateTimeSharpFixture.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
