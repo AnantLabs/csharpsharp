@@ -70,10 +70,18 @@ namespace CSharpSharp
         {
             // Declare a dictionary to count the occurence of the items in the collection
             Dictionary<T, int> itemCounts = new Dictionary<T, int>();
+            int nullItemsCount = 0;
 
             // Increase the count for each occurence of the item in the first collection
             foreach (T item in foo)
             {
+                // Increase the null counter when the item is null (it can't be used as a key)
+                if (ReferenceEquals(item, null))
+                {
+                    nullItemsCount++;
+                    continue;
+                }
+
                 if (itemCounts.ContainsKey(item))
                 {
                     itemCounts[item]++;
@@ -90,6 +98,13 @@ namespace CSharpSharp
             // Decrease the count for each occurence of the item in the second collection
             foreach (T item in bar)
             {
+                // Decrease the null counter when the item is null (it can't be used as a key)
+                if (ReferenceEquals(item, null))
+                {
+                    nullItemsCount--;
+                    continue;
+                }
+
                 // Try to find a key for the item
                 T key = keys.Find(
                     delegate(T listKey)
@@ -107,6 +122,12 @@ namespace CSharpSharp
                     // There was no occurence of this item in the first collection, thus the collections are not equal
                     return false;
                 }
+            }
+
+            // The count of null items should be 0 if the contents of the collections are equal
+            if (nullItemsCount != 0)
+            {
+                return false;
             }
 
             // The count of each item should be 0 if the contents of the collections are equal
