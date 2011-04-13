@@ -79,6 +79,24 @@ namespace CSharpSharp.Tests
         }
 
         /// <summary>
+        /// Validates that comparing collections that have a null
+        /// item does not fail.
+        /// </summary>
+        [Test]
+        public void CompareCollectionsWithNullItems()
+        {
+            List<string> first = new List<string>();
+            first.Add("one");
+            first.Add(null);
+
+            List<string> second = new List<string>();
+            second.Add("one");
+            second.Add("two");
+
+            Assert.IsFalse(new CollectionComparer<string>().AreEqual(first, second));
+        }
+
+        /// <summary>
         /// Represents a dummy class used in tests.
         /// </summary>
         private class DummyClass
