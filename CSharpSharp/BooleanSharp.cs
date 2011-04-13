@@ -19,41 +19,36 @@ namespace CSharpSharp
         private static object ThreadSafetyLock = new object();
 
         /// <summary>
-        /// The list of strings accepted as meaning "true".
+        /// The default boolean parser.
         /// </summary>
-        private static List<string> acceptedTrueStrings = new List<string>();
+        private static BooleanParser booleanParser;
 
         /// <summary>
         /// Gets the collection of strings accepted as meaning "true".
         /// </summary>
         /// <value>The accepted true strings.</value>
-        public static ReadOnlyCollection<string> AcceptedTrueStrings
+        public static IEnumerable<string> AcceptedTrueStrings
         {
             get
             {
                 lock (ThreadSafetyLock)
                 {
-                    return acceptedTrueStrings.AsReadOnly();
+                    return booleanParser.AcceptedTrueStrings;
                 }
             }
         }
 
         /// <summary>
-        /// The list of strings accepted as meaning "false".
-        /// </summary>
-        private static List<string> acceptedFalseStrings = new List<string>();
-
-        /// <summary>
         /// Gets the collection of strings accepted as meaning "false".
         /// </summary>
         /// <value>The accepted false strings.</value>
-        public static ReadOnlyCollection<string> AcceptedFalseStrings
+        public static IEnumerable<string> AcceptedFalseStrings
         {
             get
             {
                 lock (ThreadSafetyLock)
                 {
-                    return acceptedFalseStrings.AsReadOnly();
+                    return booleanParser.AcceptedFalseStrings;
                 }
             }
         }
@@ -63,7 +58,7 @@ namespace CSharpSharp
         /// </summary>
         static BooleanSharp()
         {
-            ResetAcceptedStrings();
+            booleanParser = new BooleanParser();
         }
 
         /// <summary>
@@ -73,11 +68,7 @@ namespace CSharpSharp
         {
             lock (ThreadSafetyLock)
             {
-                ClearAcceptedTrueStrings();
-                ClearAcceptedFalseStrings();
-
-                AddAcceptedTrueString("yes");
-                AddAcceptedFalseString("no");
+                booleanParser.ResetAcceptedStrings();
             }
         }
 
@@ -88,7 +79,7 @@ namespace CSharpSharp
         {
             lock (ThreadSafetyLock)
             {
-                acceptedTrueStrings = new List<string>();
+                booleanParser.ClearAcceptedTrueStrings();
             }
         }
 
@@ -100,13 +91,7 @@ namespace CSharpSharp
         {
             lock(ThreadSafetyLock)
             {
-                string cleanedUpString = trueString.StandardizeForComparison();
-
-                // Don't add duplicates
-                if (!acceptedTrueStrings.Contains(cleanedUpString))
-                {
-                    acceptedTrueStrings.Add(cleanedUpString);
-                }
+                booleanParser.AddAcceptedTrueString(trueString);
             }
         }
 
@@ -117,7 +102,7 @@ namespace CSharpSharp
         {
             lock (ThreadSafetyLock)
             {
-                acceptedFalseStrings = new List<string>();
+                booleanParser.ClearAcceptedFalseStrings();
             }
         }
 
@@ -129,28 +114,26 @@ namespace CSharpSharp
         {
             lock (ThreadSafetyLock)
             {
-                string cleanedUpString = falseString.StandardizeForComparison();
-
-                // Don't add duplicates
-                if (!acceptedFalseStrings.Contains(cleanedUpString))
-                {
-                    acceptedFalseStrings.Add(cleanedUpString);
-                }
+                booleanParser.AddAcceptedFalseString(falseString);
             }
         }
+        
+        #endregion // Class setup
 
         /// <summary>
-        /// Apply a few operations to the string to make it follow
-        /// a standard to simplify comparisons.
+        /// Converts the specified string representation of a logical value to its System.Boolean equivalent.
         /// </summary>
-        /// <param name="stringToCleanUp">The string to clean up.</param>
-        /// <returns>The standardized string.</returns>
-        private static string StandardizeForComparison(this string stringToCleanUp)
+        /// <param name="value">A string containing the value to convert.</param>
+        /// <exception cref="System.ArgumentNullException">The value is null.</exception>
+        /// <exception cref="System.FormatException">The value is not an accepted string.</exception>
+        /// <returns>true if value is equivalent to System.Boolean.TrueString; otherwise, false.</returns>
+        public static bool Parse(string value)
         {
-            return stringToCleanUp.ToLowerInvariant().Trim();
+            lock (ThreadSafetyLock)
+            {
+                return booleanParser.Parse(value);
+            }
         }
-
-        #endregion // Class setup
 
         /// <summary>
         /// Converts the specified string representation of a logical value to its System.Boolean
@@ -168,36 +151,10 @@ namespace CSharpSharp
         /// <returns>true if value was converted successfully; otherwise, false.</returns>
         public static bool TryParse(string value, out bool result)
         {
-            // First, try the standard TryParse method
-            if (Boolean.TryParse(value, out result))
+            lock (ThreadSafetyLock)
             {
-                return true;
+                return booleanParser.TryParse(value, out result);
             }
-
-            // Second, compare with 1 or 0
-            int integerValue;
-            if (Int32.TryParse(value, out integerValue))
-            {
-                if (integerValue == 1 || integerValue == 0)
-                {
-                    result = integerValue == 1;
-                    return true;
-                }
-            }
-
-            // Finally, compare with the true and false equivalent strings (yes, no and any other accepted values)
-            string cleanedUpValue = value.StandardizeForComparison();
-            bool meansTrue = acceptedTrueStrings.Contains(cleanedUpValue);
-            bool meansFalse = acceptedFalseStrings.Contains(cleanedUpValue);
-
-            if (meansTrue || meansFalse)
-            {
-                result = meansTrue;
-                return true;
-            }
-
-            // Could not parse the value
-            return false;
         }
     }
 }

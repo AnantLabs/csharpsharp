@@ -45,6 +45,7 @@
   <ItemGroup>
     <Compile Include="BooleanSharp.cs" />
     <Compile Include="CollectionComparer.cs" />
+    <Compile Include="BooleanParser.cs" />
     <Compile Include="DateTimeSharp.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="StackSharp.cs" />

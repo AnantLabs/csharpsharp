@@ -7,16 +7,10 @@ using MbUnit.Framework;
 namespace CSharpSharp.Tests
 {
     /// <summary>
-    /// Validates the BooleanSharp properties, methods and extension methods.
+    /// Validates the BooleanParser properties, methods and extension methods.
     /// </summary>
-    public class BooleanSharpFixture
+    public class BooleanParserFixture
     {
-        [SetUp]
-        public void SetupBeforeEachTest()
-        {
-            BooleanSharp.ResetAcceptedStrings();
-        }
-
         /// <summary>
         /// Validates that the standard accepted strings get parsed correctly.
         /// </summary>
@@ -40,7 +34,7 @@ namespace CSharpSharp.Tests
         public void StandardAcceptedStrings(string stringValue, bool expectedResult)
         {
             bool actualResult;
-            bool parsingWorked = BooleanSharp.TryParse(stringValue, out actualResult);
+            bool parsingWorked = new BooleanParser().TryParse(stringValue, out actualResult);
 
             Assert.IsTrue(parsingWorked);
             Assert.AreEqual(expectedResult, actualResult);
@@ -58,17 +52,19 @@ namespace CSharpSharp.Tests
         [Row("asdf", false)]
         public void CanAddAcceptedStrings(string stringValue, bool expectedResult)
         {
+            BooleanParser booleanParser = new BooleanParser();
+
             if (expectedResult)
             {
-                BooleanSharp.AddAcceptedTrueString(stringValue);
+                booleanParser.AddAcceptedTrueString(stringValue);
             }
             else
             {
-                BooleanSharp.AddAcceptedFalseString(stringValue);
+                booleanParser.AddAcceptedFalseString(stringValue);
             }
 
             bool actualResult;
-            bool parsingWorked = BooleanSharp.TryParse(stringValue, out actualResult);
+            bool parsingWorked = booleanParser.TryParse(stringValue, out actualResult);
 
             Assert.IsTrue(parsingWorked);
             Assert.AreEqual(expectedResult, actualResult);
@@ -81,16 +77,18 @@ namespace CSharpSharp.Tests
         [Test]
         public void ResetAcceptedStringsTest()
         {
-            BooleanSharp.AddAcceptedTrueString("oui");
-            BooleanSharp.AddAcceptedFalseString("non");
+            BooleanParser booleanParser = new BooleanParser();
+
+            booleanParser.AddAcceptedTrueString("oui");
+            booleanParser.AddAcceptedFalseString("non");
 
             // We already know from another test that those strings will parse
 
-            BooleanSharp.ResetAcceptedStrings();
+            booleanParser.ResetAcceptedStrings();
 
             bool parseResult;
-            bool trueStringParsingWorked = BooleanSharp.TryParse("oui", out parseResult);
-            bool falseStringParsingWorked = BooleanSharp.TryParse("non", out parseResult);
+            bool trueStringParsingWorked = booleanParser.TryParse("oui", out parseResult);
+            bool falseStringParsingWorked = booleanParser.TryParse("non", out parseResult);
 
             Assert.IsFalse(trueStringParsingWorked);
             Assert.IsFalse(falseStringParsingWorked);
@@ -102,8 +100,10 @@ namespace CSharpSharp.Tests
         [Test]
         public void CanSeeCollectionOfAcceptedStrings()
         {
-            Assert.GreaterThanOrEqualTo(1, BooleanSharp.AcceptedTrueStrings.Count());
-            Assert.GreaterThanOrEqualTo(1, BooleanSharp.AcceptedFalseStrings.Count());
+            BooleanParser booleanParser = new BooleanParser();
+
+            Assert.GreaterThanOrEqualTo(1, booleanParser.AcceptedTrueStrings.Count());
+            Assert.GreaterThanOrEqualTo(1, booleanParser.AcceptedFalseStrings.Count());
         }
     }
 }
