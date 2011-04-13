@@ -236,12 +236,29 @@ namespace CSharpSharp
 
         #region Conversion methods
 
-        public static EnumType ToEnum<EnumType>(this string value)
-            where EnumType : struct
+        /// <summary>
+        /// Converts the string representation of the name or numeric value of one or
+        /// more enumerated constants to an equivalent enumerated object.
+        /// </summary>
+        /// <typeparam name="TEnum">The type of the enum.</typeparam>
+        /// <param name="value">The value.</param>
+        /// <returns>
+        /// An object of type TEnum whose value is represented by value.
+        /// </returns>
+        /// <exception cref="System.ArgumentException">
+        /// TEnum is not an System.Enum.
+        /// -or-
+        /// value is either an empty string ("") or only contains white space.
+        /// -or-
+        /// value is a name, but not one of the named constants defined for the enumeration.
+        /// </exception>
+        /// <exception cref="System.OverflowException">
+        /// value is outside the range of the underlying type of TEnum.
+        /// </exception>
+        public static TEnum ToEnum<TEnum>(this string value)
+            where TEnum : struct
         {
-            // TODO: Add validation
-
-            return (EnumType)Enum.Parse(typeof(EnumType), value, true);
+            return (TEnum)Enum.Parse(typeof(TEnum), value, true);
         }
 
         #endregion // Conversion methods

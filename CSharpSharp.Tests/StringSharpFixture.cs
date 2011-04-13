@@ -149,7 +149,7 @@ namespace CSharpSharp.Tests
         /// <value>
         /// The dummy enum.
         /// </value>
-        public enum DummyEnum
+        public enum DummyEnum : int
         {
             Option1 = 1,
 
@@ -172,6 +172,46 @@ namespace CSharpSharp.Tests
         public void EnumConversionTest(string stringValue, DummyEnum expectedEnum)
         {
             Assert.AreEqual(expectedEnum, stringValue.ToEnum<DummyEnum>());
+        }
+
+        /// <summary>
+        /// Validates that the enum conversion throws a System.ArgumentException
+        /// when given values that cannot be parsed.
+        /// </summary>
+        /// <param name="stringValue">The string value.</param>
+        [Test]
+        [Row("")]
+        [Row(null)]
+        [Row("  ")]
+        [Row("InexistantOption")]
+        [ExpectedException(typeof(System.ArgumentException))]
+        public void EnumConversionThrowsSystemArgumentException(string stringValue)
+        {
+            stringValue.ToEnum<DummyEnum>();
+        }
+
+        /// <summary>
+        /// Validates that the enum conversion throws a System.ArgumentException
+        /// when using the method to try to convert a string to a non-enum type.
+        /// </summary>
+        [Test]
+        [ExpectedException(typeof(System.ArgumentException))]
+        public void EnumConversionFailsIfEnumTypeIsNotAnEnum()
+        {
+            "5".ToEnum<int>();
+        }
+
+        /// <summary>
+        /// Validates that the enum conversion throws a System.OverflowException
+        /// when given a value outside the range of the underlying type of the enum.
+        /// </summary>
+        [Test]
+        [ExpectedException(typeof(System.OverflowException))]
+        public void EnumConversionThrowsOverflowException()
+        {
+            long overflowingValue = (long)int.MaxValue + 1;
+
+            overflowingValue.ToString().ToEnum<DummyEnum>();
         }
 
         #endregion // Enum conversion
